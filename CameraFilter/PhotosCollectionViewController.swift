@@ -25,8 +25,34 @@ class PhotosCollectionViewController: UICollectionViewController {
                 }
                 self?.images.reverse()
                 print(self?.images)
-//                self?.collectionView.reloadData()
+                DispatchQueue.main.async {
+                    self?.collectionView.reloadData()
+                }
             }
         })
+    }
+
+    override func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.images.count
+    }
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCollectionViewCell", for: indexPath) as? PhotoCollectionViewCell else {
+            fatalError("PhotoCollectionViewCell is not found")
+        }
+
+        let asset = self.images[indexPath.row]
+        let manager = PHImageManager.default()
+
+        manager.requestImage(for: asset, targetSize: CGSize(width: 100, height: 100), contentMode: PHImageContentMode.aspectFit, options: nil) { image, _ in
+
+            DispatchQueue.main.async {
+                cell.photoImageView.image = image
+            }
+        }
+
+        return cell
     }
 }
