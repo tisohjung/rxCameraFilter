@@ -41,11 +41,12 @@ class ViewController: UIViewController {
         guard let sourceImage = self.photoImageView.image else {
             return
         }
-        FilterService().applyFilter(to: sourceImage) { filterImage in
-            DispatchQueue.main.async {
-                self.photoImageView.image = filterImage
-            }
-        }
+        FilterService().applyFilter(to: sourceImage)
+            .subscribe(onNext: { filteredImage in
+                DispatchQueue.main.async {
+                    self.photoImageView.image = filteredImage
+                }
+            })
     }
 }
 
